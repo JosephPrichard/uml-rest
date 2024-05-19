@@ -1,5 +1,6 @@
 package com.turbouml.auth;
 
+import com.turbouml.utils.Log;
 import com.turbouml.utils.Serializer;
 import com.turbouml.utils.Session;
 import com.turbouml.utils.ResponseUtils;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.logging.Level;
 
 @RestController
 public class AuthController {
@@ -28,7 +30,7 @@ public class AuthController {
             Session.setUserForContext(authService.authenticateUser(idToken));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (GeneralSecurityException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -44,10 +46,8 @@ public class AuthController {
     @GetMapping(value = "/auth/account", produces = "application/json")
     public ResponseEntity<String> account() {
         try {
-            return new ResponseEntity<>(
-                Serializer.serialize(Session.userContext()),
-                HttpStatus.OK
-            );
+            var user = Session.userContext();
+            return new ResponseEntity<>(Serializer.serialize(user), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

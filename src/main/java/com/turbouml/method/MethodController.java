@@ -1,10 +1,7 @@
 package com.turbouml.method;
 
-import com.turbouml.utils.Serializer;
+import com.turbouml.utils.*;
 import com.turbouml.classuml.Access;
-import com.turbouml.utils.Session;
-import com.turbouml.utils.ID;
-import com.turbouml.utils.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -39,6 +36,7 @@ public class MethodController {
         @RequestParam String params
     ) {
         String userId = Session.userIdContext();
+
         var newMethod = new MethodEntity();
         newMethod.setMethodId(ID.generate());
         newMethod.setContentName(name);
@@ -48,6 +46,7 @@ public class MethodController {
         newMethod.setStatic(isStatic);
         newMethod.setAbstract(isAbstract);
         newMethod.setClassId(classId);
+
         try {
             methodService.saveMethod(userId, newMethod);
             return new ResponseEntity<>(
@@ -55,7 +54,7 @@ public class MethodController {
                 HttpStatus.OK
             );
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
@@ -65,14 +64,10 @@ public class MethodController {
     public ResponseEntity<String> findMethodForClass(String classId) {
         String userId = Session.userIdContext();
         try {
-            return new ResponseEntity<>(
-                Serializer.serialize(
-                    methodService.retrieveAllMethods(userId, classId)
-                ),
-                HttpStatus.OK
-            );
+            var methods = methodService.retrieveAllMethods(userId, classId);
+            return new ResponseEntity<>(Serializer.serialize(methods), HttpStatus.OK);
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -107,7 +102,7 @@ public class MethodController {
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -123,7 +118,7 @@ public class MethodController {
             methodService.moveMethod(userId, methodIdToMove, methodIdNewOrder);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -136,7 +131,7 @@ public class MethodController {
             methodService.deleteMethod(userId, methodId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

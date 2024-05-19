@@ -43,54 +43,43 @@ public class AuthService {
             var email = payload.getEmail();
             var name = (String) payload.get("name");
 
-            var user = new User();
-            user.setId(userId);
-            user.setEmail(email);
-            user.setName(name);
-
-            return user;
+            return new User(userId, email, name);
         } else {
             throw new InvalidTokenException("Invalid ID Token");
         }
     }
 
-    public void authorizeProjectAccess(@Nullable String userId, String projectId)
-        throws AccessDeniedException {
+    public void authorizeProjectAccess(@Nullable String userId, String projectId) throws AccessDeniedException {
         if (userId == null || !authDao.canAccessProject(userId, projectId)) {
             throw new AccessDeniedException("You're not authorized to access this project");
         }
     }
 
-    public void authorizeClassAccess(@Nullable String userId, String classId)
-        throws AccessDeniedException {
+    public void authorizeClassAccess(@Nullable String userId, String classId) throws AccessDeniedException {
         if (userId == null || !authDao.canAccessClass(userId, classId)) {
             throw new AccessDeniedException("You're not authorized to access this resource");
         }
     }
 
-    public void authorizeClassesAccess(@Nullable String userId, List<String> classIds)
-        throws AccessDeniedException {
+    public void authorizeClassesAccess(@Nullable String userId, List<String> classIds) throws AccessDeniedException {
         if (userId == null || !authDao.canAccessClasses(userId, classIds)) {
             throw new AccessDeniedException("You're not authorized to access these resources");
         }
     }
 
-    public void authorizePackageAccess(@Nullable String userId, String packageId)
-        throws AccessDeniedException {
+    public void authorizePackageAccess(@Nullable String userId, String packageId) throws AccessDeniedException {
         if (userId == null || !authDao.canAccessPackage(userId, packageId)) {
             throw new AccessDeniedException("You're not authorized to access this resource");
         }
     }
 
-    public void authorizeFieldAccess(@Nullable String userId, String fieldId)
-        throws AccessDeniedException {
+    public void authorizeFieldAccess(@Nullable String userId, String fieldId) throws AccessDeniedException {
         if (userId == null || !authDao.canAccessField(userId, fieldId)) {
             throw new AccessDeniedException("You're not authorized to access this resource");
         }
     }
 
-    public void authorizeBatchFieldAccess(@Nullable String userId, List<String> fieldIds)
-        throws AccessDeniedException {
+    public void authorizeBatchFieldAccess(@Nullable String userId, List<String> fieldIds) throws AccessDeniedException {
         if (userId == null || !authDao.canAccessFields(userId, fieldIds)) {
             throw new AccessDeniedException("You're not authorized to access these resources");
         }
@@ -104,15 +93,13 @@ public class AuthService {
         return classId;
     }
 
-    public void authorizeMethodAccess(@Nullable String userId, String methodId)
-        throws AccessDeniedException {
+    public void authorizeMethodAccess(@Nullable String userId, String methodId) throws AccessDeniedException {
         if (userId == null || !authDao.canAccessMethod(userId, methodId)) {
             throw new AccessDeniedException("You're not authorized to access this resource");
         }
     }
 
-    public void authorizeBatchMethodAccess(@Nullable String userId, List<String> methodIds)
-        throws AccessDeniedException {
+    public void authorizeBatchMethodAccess(@Nullable String userId, List<String> methodIds) throws AccessDeniedException {
         if (userId == null || !authDao.canAccessMethods(userId, methodIds)) {
             throw new AccessDeniedException("You're not authorized to access these resources");
         }
@@ -126,15 +113,13 @@ public class AuthService {
         return classId;
     }
 
-    public void authorizeRelationshipAccess(@Nullable String userId, String relationshipId)
-        throws AccessDeniedException {
+    public void authorizeRelationshipAccess(@Nullable String userId, String relationshipId) throws AccessDeniedException {
         if (userId == null || !authDao.canAccessRelationship(userId, relationshipId)) {
             throw new AccessDeniedException("You're not authorized to access this resource");
         }
     }
 
-    public void areBothClassesFromSameProject(String classId1, String classId2)
-        throws ResourceScopeException {
+    public void areBothClassesFromSameProject(String classId1, String classId2) throws ResourceScopeException {
         if (!authDao.areBothClassesFromSameProject(classId1, classId2)) {
             throw new ResourceScopeException("Classes are from two different projects");
         }

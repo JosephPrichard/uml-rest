@@ -4,6 +4,7 @@ import com.turbouml.classuml.Access;
 import com.turbouml.field.FieldDto;
 import com.turbouml.method.MethodEntity;
 import com.turbouml.classuml.ClassDto;
+import com.turbouml.utils.Log;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +96,7 @@ public class DiagramDao {
             }
             return classFields;
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return null;
         }
     }
@@ -122,7 +123,7 @@ public class DiagramDao {
             }
             return classMethods;
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return null;
         }
     }

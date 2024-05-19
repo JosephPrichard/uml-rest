@@ -1,9 +1,6 @@
 package com.turbouml.project;
 
-import com.turbouml.utils.Serializer;
-import com.turbouml.utils.Session;
-import com.turbouml.utils.ID;
-import com.turbouml.utils.ResponseUtils;
+import com.turbouml.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -51,7 +48,7 @@ public class ProjectController {
                 HttpStatus.OK
             );
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
@@ -70,7 +67,7 @@ public class ProjectController {
                 HttpStatus.OK
             );
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -87,7 +84,7 @@ public class ProjectController {
                 HttpStatus.OK
             );
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -103,7 +100,7 @@ public class ProjectController {
             projectService.renameProject(userId, projectId, name);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -118,7 +115,7 @@ public class ProjectController {
             projectService.deleteProject(userId, projectId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

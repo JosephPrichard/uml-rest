@@ -11,8 +11,7 @@ public class ResponseUtils
         try {
             return Serializer.serialize(messages);
         } catch(IOException ex) {
-            //fatal error
-            ex.printStackTrace();
+            Log.exception(ex);
             return "Error";
         }
     }
@@ -22,17 +21,13 @@ public class ResponseUtils
         try {
             List<String> errorMessages = new ArrayList<>();
             for(String message : messages) {
-                errorMessages.add(
-                    message.substring(
-                        message.indexOf(":")+1
-                    )
-                );
+                var m = message.substring(message.indexOf(":") + 1);
+                errorMessages.add(m);
             }
             try {
                 return Serializer.serialize(errorMessages);
             } catch(IOException ex) {
-                //fatal error
-                ex.printStackTrace();
+                Log.exception(ex);
                 return "Error";
             }
         } catch(Exception e) {

@@ -1,10 +1,7 @@
 package com.turbouml.field;
 
-import com.turbouml.utils.Serializer;
+import com.turbouml.utils.*;
 import com.turbouml.classuml.Access;
-import com.turbouml.utils.Session;
-import com.turbouml.utils.ID;
-import com.turbouml.utils.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -38,6 +35,7 @@ public class FieldController {
         @RequestParam boolean isStatic
     ) {
         String userId = Session.userIdContext();
+
         var newField = new FieldDto();
         newField.setFieldId(ID.generate());
         newField.setContentName(name);
@@ -45,14 +43,12 @@ public class FieldController {
         newField.setClassId(classId);
         newField.setAccess(access);
         newField.setStatic(isStatic);
+
         try {
             fieldService.saveField(userId, newField);
-            return new ResponseEntity<>(
-                Serializer.serialize(newField),
-                HttpStatus.OK
-            );
+            return new ResponseEntity<>(Serializer.serialize(newField), HttpStatus.OK);
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
@@ -62,14 +58,10 @@ public class FieldController {
     public ResponseEntity<String> findFieldForClass(@RequestParam String classId) {
         String userId = Session.userIdContext();
         try {
-            return new ResponseEntity<>(
-                Serializer.serialize(
-                    fieldService.retrieveAllFields(userId, classId)
-                ),
-                HttpStatus.OK
-            );
+            var fields = fieldService.retrieveAllFields(userId, classId);
+            return new ResponseEntity<>(Serializer.serialize(fields), HttpStatus.OK);
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -100,7 +92,7 @@ public class FieldController {
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -116,7 +108,7 @@ public class FieldController {
             fieldService.moveField(userId, fieldIdToMove, fieldIdNewOrder);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -129,7 +121,7 @@ public class FieldController {
             fieldService.deleteField(userId, fieldId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

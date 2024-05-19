@@ -1,9 +1,6 @@
 package com.turbouml.classuml;
 
-import com.turbouml.utils.Session;
-import com.turbouml.utils.ResponseUtils;
-import com.turbouml.utils.Serializer;
-import com.turbouml.utils.ID;
+import com.turbouml.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -42,6 +39,7 @@ public class ClassController {
         @Valid @Min(0) @Max(MAX_Y) @RequestParam int yPos
     ) {
         String userId = Session.userIdContext();
+
         var newClass = new ClassDto();
         newClass.setClassId(ID.generate());
         newClass.setContentName(name);
@@ -50,6 +48,7 @@ public class ClassController {
         newClass.setXPos(xPos);
         newClass.setYPos(yPos);
         newClass.setProjectId(projectId);
+
         try {
             classService.saveClass(userId, newClass);
             return new ResponseEntity<>(
@@ -57,7 +56,7 @@ public class ClassController {
                 HttpStatus.OK
             );
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
@@ -69,14 +68,10 @@ public class ClassController {
     ) {
         String userId = Session.userIdContext();
         try {
-            return new ResponseEntity<>(
-                Serializer.serialize(
-                    classService.retrieveClass(userId, classId)
-                ),
-                HttpStatus.OK
-            );
+            var clazz = classService.retrieveClass(userId, classId);
+            return new ResponseEntity<>(Serializer.serialize(clazz), HttpStatus.OK);
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -86,14 +81,10 @@ public class ClassController {
     public ResponseEntity<String> findClassForProject(@RequestParam String projectId) {
         String userId = Session.userIdContext();
         try {
-            return new ResponseEntity<>(
-                Serializer.serialize(
-                    classService.retrieveAllClasses(userId, projectId)
-                ),
-                HttpStatus.OK
-            );
+            var clazzList = classService.retrieveAllClasses(userId, projectId);
+            return new ResponseEntity<>(Serializer.serialize(clazzList), HttpStatus.OK);
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -109,7 +100,7 @@ public class ClassController {
             classService.updateClassStereotype(userId, classId, stereotype);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -125,7 +116,7 @@ public class ClassController {
             classService.renameClass(userId, classId, name);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -142,7 +133,7 @@ public class ClassController {
             classService.moveClass(userId, classId, xPos, yPos);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -161,7 +152,7 @@ public class ClassController {
             }
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

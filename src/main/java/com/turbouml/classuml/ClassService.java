@@ -22,20 +22,17 @@ public class ClassService {
         this.authService = authService;
     }
 
-    public void saveClass(String userId, ClassDto newClass)
-        throws AccessDeniedException {
+    public void saveClass(String userId, ClassDto newClass) throws AccessDeniedException {
         authService.authorizeProjectAccess(userId, newClass.getProjectId());
         classDao.save(newClass);
     }
 
-    public ClassDto retrieveClass(String userId, String classId)
-        throws AccessDeniedException {
+    public ClassDto retrieveClass(String userId, String classId) throws AccessDeniedException {
         authService.authorizeClassAccess(userId, classId);
         return classDao.findByClassId(classId);
     }
 
-    public List<ClassDto> retrieveAllClasses(String userId, String projectId)
-        throws AccessDeniedException {
+    public List<ClassDto> retrieveAllClasses(String userId, String projectId) throws AccessDeniedException {
         authService.authorizeProjectAccess(userId, projectId);
         return classDao.findByProjectId(projectId);
     }
@@ -45,26 +42,22 @@ public class ClassService {
         classDao.updateStereotypes(classId, stereotypes);
     }
 
-    public void renameClass(String userId, String classId, String newName)
-        throws AccessDeniedException {
+    public void renameClass(String userId, String classId, String newName) throws AccessDeniedException {
         authService.authorizeClassAccess(userId, classId);
         classDao.rename(classId, newName);
     }
 
-    public void moveClass(String userId, String classId, int x, int y)
-        throws AccessDeniedException {
+    public void moveClass(String userId, String classId, int x, int y) throws AccessDeniedException {
         authService.authorizeClassAccess(userId, classId);
         classDao.move(classId, x, y);
     }
 
-    public void deleteClass(String userId, String classId)
-        throws AccessDeniedException {
+    public void deleteClass(String userId, String classId) throws AccessDeniedException {
         authService.authorizeClassAccess(userId, classId);
         classDao.delete(classId);
     }
 
-    public void deleteClasses(String userId, List<String> classIds)
-        throws AccessDeniedException {
+    public void deleteClasses(String userId, List<String> classIds) throws AccessDeniedException {
         authService.authorizeClassesAccess(userId, classIds);
         classDao.delete(classIds);
     }

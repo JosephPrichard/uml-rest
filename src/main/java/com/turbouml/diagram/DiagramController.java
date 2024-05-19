@@ -1,5 +1,6 @@
 package com.turbouml.diagram;
 
+import com.turbouml.utils.Log;
 import com.turbouml.utils.Serializer;
 import com.turbouml.utils.Session;
 import com.turbouml.utils.ResponseUtils;
@@ -28,12 +29,9 @@ public class DiagramController {
         String userId = Session.userIdContext();
         try {
             var diagram = umlDiagramService.retrieveDiagram(userId, projectId);
-            return new ResponseEntity<>(
-                Serializer.serialize(diagram),
-                HttpStatus.OK
-            );
+            return new ResponseEntity<>(Serializer.serialize(diagram), HttpStatus.OK);
         } catch (DataAccessException | IOException | SQLException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

@@ -1,11 +1,8 @@
 package com.turbouml.packageuml;
 
-import com.turbouml.utils.Serializer;
+import com.turbouml.utils.*;
 import com.turbouml.exceptions.AccessDeniedException;
 import com.turbouml.exceptions.InvalidInputException;
-import com.turbouml.utils.Session;
-import com.turbouml.utils.ID;
-import com.turbouml.utils.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -39,6 +36,7 @@ public class PackageController {
         @RequestParam String projectId
     ) {
         String userId = Session.userIdContext();
+
         var newPackage = new PackageDto();
         newPackage.setPackageId(ID.generate());
         newPackage.setContentName(name);
@@ -47,15 +45,13 @@ public class PackageController {
         newPackage.setXDist(xDist);
         newPackage.setYDist(yDist);
         newPackage.setProjectId(projectId);
+
         packageService.validatePackage(xPos, yPos, xDist, yDist);
         try {
             packageService.savePackage(userId, newPackage);
-            return new ResponseEntity<>(
-                Serializer.serialize(newPackage),
-                HttpStatus.OK
-            );
+            return new ResponseEntity<>(Serializer.serialize(newPackage), HttpStatus.OK);
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
@@ -72,7 +68,7 @@ public class PackageController {
                 HttpStatus.OK
             );
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -91,7 +87,7 @@ public class PackageController {
             packageService.reFramePackage(userId, packageId, x, y, xDist, yDist);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -107,7 +103,7 @@ public class PackageController {
             packageService.renamePackage(userId, packageId, packageName);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -122,7 +118,7 @@ public class PackageController {
             packageService.deletePackage(userId, packageId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

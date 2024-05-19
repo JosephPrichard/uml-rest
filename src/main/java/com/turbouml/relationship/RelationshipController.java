@@ -1,11 +1,8 @@
 package com.turbouml.relationship;
 
 import com.turbouml.exceptions.ResourceScopeException;
-import com.turbouml.utils.Serializer;
+import com.turbouml.utils.*;
 import com.turbouml.exceptions.AccessDeniedException;
-import com.turbouml.utils.Session;
-import com.turbouml.utils.ID;
-import com.turbouml.utils.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -45,12 +42,9 @@ public class RelationshipController {
         newRelationship.setLabel(label);
         try {
             relationshipService.saveRelationship(userId, newRelationship);
-            return new ResponseEntity<>(
-                Serializer.serialize(newRelationship),
-                HttpStatus.OK
-            );
+            return new ResponseEntity<>(Serializer.serialize(newRelationship), HttpStatus.OK);
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
@@ -60,14 +54,10 @@ public class RelationshipController {
     public ResponseEntity<String> findRelationshipsForProject(@RequestParam String projectId) {
         String userId = Session.userIdContext();
         try {
-            return new ResponseEntity<>(
-                Serializer.serialize(
-                    relationshipService.retrieveAllRelationships(userId, projectId)
-                ),
-                HttpStatus.OK
-            );
+            var relationships = relationshipService.retrieveAllRelationships(userId, projectId);
+            return new ResponseEntity<>(Serializer.serialize(relationships), HttpStatus.OK);
         } catch (DataAccessException | IOException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -83,7 +73,7 @@ public class RelationshipController {
             relationshipService.renameRelationship(userId, relationshipId, label);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -96,7 +86,7 @@ public class RelationshipController {
             relationshipService.deleteRelationship(userId, relationshipId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException ex) {
-            ex.printStackTrace();
+            Log.exception(ex);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
